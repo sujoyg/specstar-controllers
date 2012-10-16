@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'specstar-controllers'
-  s.version     = '0.0.1'
+  s.version     = '0.0.2'
   s.date        = Time.now.to_date
   s.summary     = 'RSpec helpers for controllers.'
   s.authors     = ['Sujoy Gupta']
