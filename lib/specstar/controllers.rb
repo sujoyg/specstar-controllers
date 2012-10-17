@@ -9,10 +9,11 @@ module Specstar
         end
       end
 
-      def has_skip_before_filter?(controller, filter, action)
+      def has_skip_before_filter?(controller, filter, actions)
         controller._process_action_callbacks.select { |callback|
           callback.chain.select { |chain|
-            chain.kind == :before && chain.filter.to_s == filter.to_s && (action.nil? || chain.per_key[:unless].include?("action_name == '#{action}'"))
+	    actions_match = actions.nil? || actions.select { |action| !chain.per_key[:unless].include?("action_name == '#{action}'") }.empty?
+            chain.kind == :before && chain.filter.to_s == filter.to_s && actions_match
           }.size > 0
         }.size > 0
       end
@@ -27,8 +28,8 @@ module Specstar
       end
 
       RSpec::Matchers.define :have_skip_before_filter do |filter|
-        chain :only do |action|
-          @action = action
+        chain :only do |actions|
+          @action = *actions
         end
 
         match do |controller|
