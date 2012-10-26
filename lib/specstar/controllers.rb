@@ -5,8 +5,16 @@ module Specstar
     module Matchers
       RSpec::Matchers.define :have_layout do |expected|
         match do |controller|
-          expected == controller.class.instance_variable_get("@_layout")
+          expected.to_s == controller.class.instance_variable_get("@_layout")
         end
+
+    	failure_message_for_should do |controller|
+      	  "Expected #{controller.class.name} to have layout '#{expected}'."
+    	end
+
+    	failure_message_for_should_not do |controller|
+      	  "Expected #{controller.class.name} not to have layout '#{expected}'."
+    	end
       end
 
       def has_skip_before_filter?(controller, filter, actions)
