@@ -18,15 +18,19 @@ module Specstar
       end
 
       def has_skip_before_filter?(controller, filter, actions)
-        controller._process_action_callbacks.select { |callback|
-          callback.chain.select { |chain|
-	    actions_match = actions.nil? || actions.select { |action| !chain.per_key[:unless].include?("action_name == '#{action}'") }.empty?
-            chain.kind == :before && chain.filter.to_s == filter.to_s && actions_match
+        if actions.present?
+          controller._process_action_callbacks.select { |callback|
+            callback.chain.select { |chain|
+	      actions_match = actions.select { |action| !chain.per_key[:unless].include?("action_name == '#{action}'") }.empty?
+              chain.kind == :before && chain.filter.to_s == filter.to_s && actions_match
+            }.size > 0
           }.size > 0
-        }.size > 0
+	else
+	  !has_before_filter?(controller, filter)
+	end
       end
 
-      def has_before_filter?(controller, filter, action)
+      def has_before_filter?(controller, filter, action=nil)
         callbacks = controller.is_a?(ApplicationController) ? controller._process_action_callbacks : controller._dispatch_callbacks
         callbacks.select { |callback|
           callback.chain.select { |chain|
