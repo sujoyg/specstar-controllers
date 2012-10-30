@@ -1,3 +1,6 @@
+# 0.0.5
+  * Bug: have_skip_before_filter should work even when there are no actions specified with 'only'.
+
 # 0.0.4
   * Feature: Better messaging for have_layout matcher.
   * Bug: have_layout should work with layout name supplied as either a symbol or a string.
