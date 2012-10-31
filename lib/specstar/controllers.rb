@@ -17,14 +17,17 @@ module Specstar
     	end
       end
 
+      def has_skip_before_filter_for_action?(controller, filter, action)
+        controller._process_action_callbacks.any? { |callback|
+          callback.chain.any? { |chain|
+            chain.kind == :before && chain.filter.to_s == filter.to_s && chain.per_key[:unless].any? { |item| item.include? "action_name == '#{action}'" }
+          }
+        }
+      end
+
       def has_skip_before_filter?(controller, filter, actions)
         if actions.present?
-          controller._process_action_callbacks.select { |callback|
-            callback.chain.select { |chain|
-	      actions_match = actions.select { |action| !chain.per_key[:unless].include?("action_name == '#{action}'") }.empty?
-              chain.kind == :before && chain.filter.to_s == filter.to_s && actions_match
-            }.size > 0
-          }.size > 0
+	  actions.all? { |action| has_skip_before_filter_for_action?(controller, filter, action) }
 	else
 	  !has_before_filter?(controller, filter)
 	end
