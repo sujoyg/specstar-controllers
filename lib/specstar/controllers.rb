@@ -25,7 +25,19 @@ module Specstar
         }
       end
 
-      def has_skip_before_filter?(controller, filter, actions)
+      def has_before_filter_for_action?(controller, filter, action=nil)
+        controller._process_action_callbacks.any? { |callback|
+          callback.chain.any? { |chain|
+	    if action
+              chain.kind == :before && chain.filter.to_s == filter.to_s && chain.per_key[:if].any? { |item| item.include? "action_name == '#{action}'" }
+	    else
+              chain.kind == :before && chain.filter.to_s == filter.to_s
+	    end
+          }
+        }
+      end
+
+      def has_skip_before_filter?(controller, filter, actions=[])
         if actions.present?
 	  actions.all? { |action| has_skip_before_filter_for_action?(controller, filter, action) }
 	else
@@ -33,22 +45,21 @@ module Specstar
 	end
       end
 
-      def has_before_filter?(controller, filter, action=nil)
-        callbacks = controller.is_a?(ApplicationController) ? controller._process_action_callbacks : controller._dispatch_callbacks
-        callbacks.select { |callback|
-          callback.chain.select { |chain|
-            chain.kind == :before && chain.filter.to_s == filter.to_s && (action.nil? || chain.per_key[:if].include?("action_name == '#{action}'"))
-          }.size > 0
-        }.size > 0
+      def has_before_filter?(controller, filter, actions=[])
+        if actions.present?
+	  actions.all? { |action| has_before_filter_for_action?(controller, filter, action) }
+	else
+	  has_before_filter_for_action?(controller, filter)
+	end
       end
 
       RSpec::Matchers.define :have_skip_before_filter do |filter|
         chain :only do |actions|
-          @action = *actions
+          @actions = *actions
         end
 
         match do |controller|
-          has_skip_before_filter?(controller, filter, @action)
+          has_skip_before_filter?(controller, filter, @actions)
         end
 
     	failure_message_for_should do |controller|
@@ -65,12 +76,12 @@ module Specstar
       end
 
       RSpec::Matchers.define :have_before_filter do |filter|
-        chain :only do |action|
-          @action = action
+        chain :only do |actions|
+          @actions = *actions
         end
 
         match do |controller|
-          has_before_filter?(controller, filter, @action)
+          has_before_filter?(controller, filter, @actions)
         end
 
     	failure_message_for_should do |controller|

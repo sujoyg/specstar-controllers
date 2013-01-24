@@ -1,3 +1,6 @@
+# 0.0.7
+  * Bug: have_before_filter was not working.
+
 # 0.0.6
   * Bug: have_skip_before_filter should work with multiple actions specified with 'only'.
 
