@@ -1,3 +1,6 @@
+# 0.0.9
+  * Feature: should_not have_layout works as expected.
+
 # 0.0.7
   * Bug: have_before_filter was not working.
 

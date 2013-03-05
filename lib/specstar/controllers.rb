@@ -5,15 +5,27 @@ module Specstar
     module Matchers
       RSpec::Matchers.define :have_layout do |expected|
         match do |controller|
-          expected.to_s == controller.class.instance_variable_get("@_layout")
+	  if expected
+             expected.to_s == controller.class.instance_variable_get("@_layout")
+	  else
+	     controller.class.instance_variable_get("@_layout")
+	  end
         end
 
     	failure_message_for_should do |controller|
-      	  "Expected #{controller.class.name} to have layout '#{expected}'."
+	  if expected
+      	    "Expected #{controller.class.name} to have layout '#{expected}'."
+	  else
+      	    "Expected #{controller.class.name} to have layout."
+	  end
     	end
 
     	failure_message_for_should_not do |controller|
-      	  "Expected #{controller.class.name} not to have layout '#{expected}'."
+	  if expected
+      	    "Expected #{controller.class.name} not to have layout '#{expected}'."
+	  else
+      	    "Expected #{controller.class.name} not to have layout."
+	  end
     	end
       end
 
