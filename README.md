@@ -1,5 +1,7 @@
 This package helps you check that the filters and layouts in a controller have been defined correctly.
 
+Matchers
+--------
 You may have created a controller as follows:
 
     class MyController < ApplicationController
@@ -26,6 +28,8 @@ You can spec this controller using the matchers in this package as follows:
 
 To make this matcher available in your controller specs, do the following:
 
+Using
+-----
 **Gemfile**
 
     group :test do
@@ -43,5 +47,14 @@ To make this matcher available in your controller specs, do the following:
       config.include Specstar::Controllers::Matchers, :type => :controller
       ...
     end
+
+Related Tools
+-------------
+You may also want to consider the following gems to help with your specs:
+
+* **specstar-models**: A Ruby gem containing matchers for checking that the attributes, validations and associations of a model have been defined correctly. Learn more [here](https://github.com/sujoyg/specstar-models 'Github'). Released gems are [here](http://rubygems.org/gems/specstar-models).
+* **specstar-support-random**: Utility methods for generating random objects (e.g. URLs, emails, hashes) for use in your specs. Learn more [here](https://github.com/sujoyg/specstar-support-random 'Github'). Release gems are [here](http://rubygems.org/gems/specstar-support-random). 
+
+
 
 
