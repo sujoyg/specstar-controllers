@@ -1,3 +1,6 @@
+# 0.1.0
+  * Feature: Support for Rails 4.
+
 # 0.0.9
   * Feature: should_not have_layout works as expected.
 
