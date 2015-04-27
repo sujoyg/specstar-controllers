@@ -1,3 +1,6 @@
+# 0.1.1
+  * Feature: Changing to replace deprecation for failure_message_for_should and failure_message_for_should_not.
+
 # 0.1.0
   * Feature: Support for Rails 4.
 

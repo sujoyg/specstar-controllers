@@ -12,7 +12,7 @@ module Specstar
           end
         end
 
-        failure_message_for_should do |controller|
+        failure_message do |controller|
           if expected
             "Expected #{controller.class.name} to have layout '#{expected}'."
           else
@@ -20,7 +20,7 @@ module Specstar
           end
         end
 
-        failure_message_for_should_not do |controller|
+        failure_message_when_negated do |controller|
           if expected
             "Expected #{controller.class.name} not to have layout '#{expected}'."
           else
@@ -70,11 +70,11 @@ module Specstar
           has_skip_before_filter?(controller, filter, @actions)
         end
 
-        failure_message_for_should do |controller|
+        failure_message do |controller|
           "Expected #{controller.class.name} to have a skip before filter '#{filter}'."
         end
 
-        failure_message_for_should_not do |controller|
+        failure_message_when_negated do |controller|
           "Expected #{controller.class.name} not to have a skip before filter '#{filter}'."
         end
 
@@ -92,11 +92,11 @@ module Specstar
           has_before_filter?(controller, filter, @actions)
         end
 
-        failure_message_for_should do |controller|
+        failure_message do |controller|
           "Expected #{controller.class.name} to have a before filter '#{filter}'."
         end
 
-        failure_message_for_should_not do |controller|
+        failure_message_when_negated do |controller|
           "Expected #{controller.class.name} not to have a before filter '#{filter}'."
         end
 
