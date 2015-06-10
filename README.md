@@ -5,8 +5,8 @@ Matchers
 You may have created a controller as follows:
 
     class MyController < ApplicationController
-      before_filter :set_user
-      skip_before_filter :authorize, :only => [:home]
+      before_filter :set_user, :only => [:home]
+      skip_before_filter :authorize
 
       layout 'my_layout'
 
@@ -20,8 +20,8 @@ You can spec this controller using the matchers in this package as follows:
     require 'spec_helper'
 
     describe MyController do
-      it { should have_before_filter(:set_user) }
-      it { should have_skip_before_filter(:authorize).only([:home]) }
+      it { should have_before_filter(:set_user, :only => [:home]) }
+      it { should have_skip_before_filter(:authorize)) }
       it { should have_layout 'my_layout' }
       ...
     end
@@ -34,7 +34,7 @@ Using
 
     group :test do
       ...
-      gem 'specstar-controllers', '~> 0.0.3'
+      gem 'specstar-controllers', '~> 0.2.0'
       ...
     end
 

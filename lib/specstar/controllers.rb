@@ -35,16 +35,6 @@ module Specstar
         }
       end
 
-      def has_before_filter_for_action?(controller, filter, action=nil)
-        controller._process_action_callbacks.any? { |callback|
-          if action
-            callback.kind == :before && callback.filter.to_s == filter.to_s && callback.per_key[:if].any? { |item| item.include? "action_name == '#{action}'" }
-          else
-            callback.kind == :before && callback.filter.to_s == filter.to_s
-          end
-        }
-      end
-
       def has_skip_before_filter?(controller, filter, actions=[])
         if actions.present?
           actions.all? { |action| has_skip_before_filter_for_action?(controller, filter, action) }
@@ -53,12 +43,40 @@ module Specstar
         end
       end
 
-      def has_before_filter?(controller, filter, actions=[])
-        if actions.present?
-          actions.all? { |action| has_before_filter_for_action?(controller, filter, action) }
+      def callback_matches?(callback, condition, actions)
+        field = "@#{condition}"
+
+        if actions.size > 0
+          actions.all? { |a|
+            callback.instance_variable_get(field).any? { |item| item.include? "action_name == '#{a}'" }
+          }
         else
-          has_before_filter_for_action?(controller, filter)
+          callback.instance_variable_get(field).empty?
         end
+      end
+
+      def has_before_filter?(controller, filter, options={})
+        result = true
+
+        if options.include?(:only)
+          result = controller._process_action_callbacks.any? { |callback|
+            callback.kind == :before && callback.filter.to_s == filter.to_s && callback_matches?(callback, :if, options[:only])
+          }
+        end
+
+        if result && options.include?(:except)
+          result = controller._process_action_callbacks.any? { |callback|
+            callback.kind == :before && callback.filter.to_s == filter.to_s && callback_matches?(callback, :unless, options[:except])
+          }
+        end
+
+        if result && options.blank?
+          result = controller._process_action_callbacks.any? { |callback|
+            callback.kind == :before && callback.filter.to_s == filter.to_s
+          }
+        end
+
+        result
       end
 
       RSpec::Matchers.define :have_skip_before_filter do |filter|
@@ -83,21 +101,25 @@ module Specstar
         end
       end
 
-      RSpec::Matchers.define :have_before_filter do |filter|
-        chain :only do |actions|
-          @actions = *actions
-        end
-
+      RSpec::Matchers.define :have_before_filter do |filter, options={}|
         match do |controller|
-          has_before_filter?(controller, filter, @actions)
+          has_before_filter?(controller, filter, options)
         end
 
         failure_message do |controller|
-          "Expected #{controller.class.name} to have a before filter '#{filter}'."
+          if options
+            "Expected #{controller.class.name} to have a before_filter #{filter} with #{options}."
+          else
+            "Expected #{controller.class.name} to have a before_filter #{filter}."
+          end
         end
 
         failure_message_when_negated do |controller|
-          "Expected #{controller.class.name} not to have a before filter '#{filter}'."
+          if options
+            "Expected #{controller.class.name} not to have a before_filter #{filter} with #{options}."
+          else
+            "Expected #{controller.class.name} not to have a before_filter #{filter}."
+          end
         end
 
         description do

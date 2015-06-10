@@ -1,3 +1,6 @@
+# 0.2.0
+  * Feature: Allowing have_before_filter matcher to accept :if and :only conditionals.
+
 # 0.1.1
   * Feature: Changing to replace deprecation for failure_message_for_should and failure_message_for_should_not.
 
