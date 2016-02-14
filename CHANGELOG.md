@@ -1,3 +1,6 @@
+# 0.2.1
+  * Feature: Adding support for have_before_action.
+
 # 0.2.0
   * Feature: Allowing have_before_filter matcher to accept :if and :only conditionals.
 

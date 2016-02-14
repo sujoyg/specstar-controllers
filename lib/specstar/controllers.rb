@@ -79,6 +79,10 @@ module Specstar
         result
       end
 
+      def has_before_action?(controller, action, options={})
+      	  has_before_filter? controller, action, options
+      end
+
       RSpec::Matchers.define :have_skip_before_filter do |filter|
         chain :only do |actions|
           @actions = *actions
@@ -100,6 +104,34 @@ module Specstar
           "have a skip before filter '#{filter}'."
         end
       end
+
+
+      RSpec::Matchers.define :have_before_action do |action, options={}|
+        match do |controller|
+          has_before_action?(controller, action, options)
+        end
+
+        failure_message do |controller|
+          if options
+            "Expected #{controller.class.name} to have a before_action #{action} with #{options}."
+          else
+            "Expected #{controller.class.name} to have a before_action #{action}."
+          end
+        end
+
+        failure_message_when_negated do |controller|
+          if options
+            "Expected #{controller.class.name} not to have a before_action #{action} with #{options}."
+          else
+            "Expected #{controller.class.name} not to have a before_action #{action}."
+          end
+        end
+
+        description do
+          "have a before action '#{action}'."
+        end
+      end
+
 
       RSpec::Matchers.define :have_before_filter do |filter, options={}|
         match do |controller|
